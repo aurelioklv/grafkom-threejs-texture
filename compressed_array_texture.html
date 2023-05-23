@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Three.js CanvasTexture Example</title>
+    <style>
+      body {
+        margin: 0;
+      }
+      canvas {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <script type="module">
+      import * as THREE from "./node_modules/three/build/three.module.js";
+
+      // Set up the scene, renderer, and camera
+      const scene = new THREE.Scene();
+      const renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      camera.position.z = 5;
+
+      // Check for ETC1 extension support
+      const etc1Extension = renderer.extensions.get(
+        "WEBGL_compressed_texture_etc1"
+      );
+      //   if (!etc1Extension) {
+      //     console.error("ETC1 compression not supported");
+      //     return;
+      //   }
+
+      // Load the compressed texture file
+      const textureLoader = new THREE.TextureLoader();
+      textureLoader.load(
+        "grass-texture-2_NRM.dds",
+        function (compressedTexture) {
+          // Create a material and assign the compressed texture
+          const material = new THREE.MeshBasicMaterial({
+            map: compressedTexture,
+          });
+
+          // Create a geometry
+          const geometry = new THREE.BoxGeometry(1, 1, 1);
+
+          // Create a mesh using the geometry and material
+          const mesh = new THREE.Mesh(geometry, material);
+
+          // Add the mesh to the scene
+          scene.add(mesh);
+
+          // Render the scene
+          function animate() {
+            requestAnimationFrame(animate);
+            mesh.rotation.x += 0.01;
+            mesh.rotation.y += 0.01;
+            renderer.render(scene, camera);
+          }
+          animate();
+        }
+      );
+    </script>
+  </body>
+</html>
