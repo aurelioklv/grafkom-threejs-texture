@@ -47,7 +47,7 @@
 
     // Create a DDSLoader instance
     var ddsLoader = new THREE.DDSLoader();
-    ddsLoader.load('grass.dds', function (ddsTexture) {
+    ddsLoader.load('textures/stone.dds', function (ddsTexture) {
       var ddsMaterial = new THREE.MeshBasicMaterial({ map: ddsTexture });
       var geometry = new THREE.BoxGeometry(2, 2, 2);
       ddsCube = new THREE.Mesh(geometry, ddsMaterial);
@@ -58,7 +58,7 @@
 
     // Create a TextureLoader instance
     var pngLoader = new THREE.TextureLoader();
-    pngLoader.load('grass.png', function (pngTexture) {
+    pngLoader.load('textures/stone.png', function (pngTexture) {
       // Texture loaded, create a material and apply the texture
       var pngMaterial = new THREE.MeshBasicMaterial({ map: pngTexture });
       var geometry = new THREE.BoxGeometry(2, 2, 2);

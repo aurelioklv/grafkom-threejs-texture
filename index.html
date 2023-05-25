@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Compressed Array Texture Example</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <script type="module">
+        import * as THREE from "./node_modules/three/build/three.module.js";
+
+        // Set up the scene, camera, and renderer
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(
+            75,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+        );
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Create a compressed texture
+        var texture = new THREE.CompressedTexture();
+        texture.format = THREE.RGBA_ASTC_4x4_Format;
+        texture.mipmaps = [];
+        texture.image = { width: 64, height: 64 };
+
+        // Generate some dummy data for the texture
+        var dataSize = texture.image.width * texture.image.height * 4;
+        var data = new Uint8Array(dataSize);
+        for (var i = 0; i < dataSize; i++) {
+            data[i] = Math.random() * 255;
+        }
+
+        // Compress the texture data
+        var blockCount = THREE.MathUtils.ceilPowerOfTwo(texture.image.width / 4) *
+            THREE.MathUtils.ceilPowerOfTwo(texture.image.height / 4);
+        var blockSize = 16;
+        texture.mipmaps.push({
+            data: data,
+            width: texture.image.width,
+            height: texture.image.height,
+            blockCount: blockCount,
+            blockSize: blockSize,
+        });
+        texture.minFilter = THREE.LinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+
+        // Create a plane with the compressed texture
+        var geometry = new THREE.PlaneGeometry(2, 2);
+        var material = new THREE.MeshBasicMaterial({ map: texture });
+        var plane = new THREE.Mesh(geometry, material);
+        scene.add(plane);
+
+        // Add a directional light
+        var light = new THREE.DirectionalLight(0xffffff);
+        light.position.set(1, 1, 1);
+        scene.add(light);
+
+        // Position the camera
+        camera.position.z = 5;
+
+        // Render the scene
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+
+</html>
